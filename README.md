@@ -1,53 +1,28 @@
-# C-Project
-# Task Management App
+# Random Password Generator 
 
 ## Project Description
 
-The Task Management App is a web-based application designed to help individuals and teams efficiently manage their tasks, deadlines, and projects. This app provides a user-friendly interface for creating, organizing, and tracking tasks, ensuring improved productivity and organization.
+The Random Password Generator is a simple command-line tool designed to generate strong and random passwords for better security. It allows users to generate passwords of varying lengths with a mix of uppercase and lowercase letters, digits, and special characters, making them suitable for use across a variety of online accounts and applications.
 
 ## Goals
 
-- **Task Creation and Organization:** Enable users to create tasks, set due dates, and categorize tasks into projects or categories.
+- **Password Generation:** Develop a program that generates random passwords according to user-defined length and complexity requirements.
 
-- **Task Tracking:** Provide features for tracking task progress, marking tasks as complete, and visualizing overall task completion status.
+- **Security:** Ensure that the generated passwords are sufficiently strong and follow best practices for password security.
 
-- **User Authentication and Authorization:** Implement secure user authentication to ensure data privacy and access control.
+- **Customization:** Allow users to customize the length and composition of the generated passwords based on their specific needs.
 
-- **Intuitive User Interface:** Design a responsive and easy-to-navigate interface for a seamless user experience.
-
-- **Reminders and Notifications:** Integrate notifications to remind users of upcoming deadlines and important updates.
 
 ## Specifications
 
-### Frontend
+### Language
 
-- Built using HTML5, CSS3, and JavaScript.
-- Responsive design for desktop and mobile devices.
-
-### Backend
-
-- Developed with Node.js and Express.js.
-- Manages user authentication, task storage, and frontend communication.
-
-### Database
-
-- Utilizes a relational database (e.g., PostgreSQL) to securely store user data, tasks, and projects.
-
-### User Authentication
-
-- Implements JWT-based user registration and login.
-
-### Notifications
-
-- Sends email notifications and in-app reminders.
+- Built using C language.
 
 ## Design
 
-The app's design focuses on simplicity, usability, and aesthetics. The user interface features a clean dashboard displaying tasks organized by projects and due dates. Users can add new tasks, mark tasks as complete, and modify task details easily.
+This tool focuses on simplicity and usablility.Users can generate random and strong passwords based on their own specifications.
 
-![App Design](/images/app_design.png)
-
-The color scheme and layout ensure a professional and calming user experience across devices.
 
 ## Getting Started
 
@@ -56,18 +31,11 @@ The color scheme and layout ensure a professional and calming user experience ac
 3. Configure database and authentication settings.
 4. Run the app: `npm start`
 
-## Contributing
-
-Contributions are welcome! Please read the [Contribution Guidelines](CONTRIBUTING.md) for more details.
-
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
 
-## Contact
 
-For questions or support, contact us at contact@example.com.
 
 ---
 
-*This README is a fictional example for demonstration purposes only.*
