@@ -22,6 +22,8 @@ The Random Password Generator is a simple tool designed to generate strong and r
 
 - Built using C language.
 
+-The desired length of the password and whether it contains uppercase letters, lowercase letters, numbers and special symbols should be as per the specifications of the user.
+
 ## Design
 
 This tool focuses on simplicity and usablility.Users can generate random and strong passwords based on their own specifications.
@@ -30,11 +32,11 @@ This tool focuses on simplicity and usablility.Users can generate random and str
 ## Getting Started
 
 1. Clone the repository: `git clone https://github.com/SANYA12SHARMA/C-Project.git`
-2. Copy the file content: `randomauto.c`
-3. Once you have downloaded file `randomauto.c` , compile it and run `randomauto.c`.
+2. Copy the file `randomauto.c`
+3. Compile it : `gcc -c randomauto.c`.
+4. Run it:
+ `gcc -o random randomauto.c`
+ `./random`
 
-## License
-
-This project is licensed under the [MIT License](LICENSE).
 
 
