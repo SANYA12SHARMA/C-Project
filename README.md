@@ -21,8 +21,9 @@ The Random Password Generator is a simple tool designed to generate strong and r
 ### Language
 
 - Built using C language.
+  
 
--The desired length of the password and whether it contains uppercase letters, lowercase letters, numbers and special symbols should be as per the specifications of the user.
+- The desired length of the password and whether it contains uppercase letters, lowercase letters, numbers and special symbols should be as per the specifications of the user.
 
 ## Design
 
