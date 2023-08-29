@@ -25,7 +25,7 @@ void calculate(const char* pass){
 	}
 }
 bool isSimilar(char c){
-	const char similarChars[]="O01l";
+	const char similarChars[]="iI1loO0";
 	for(int i=0;similarChars[i]!='\0';i++){
 		if(c==similarChars[i]){
 			return true;
@@ -45,7 +45,8 @@ void excludeSimilar(char* str){
 			curr++;
 		}
 	}
-	str[curr]='\0';
+    str[curr]='\0';
+
 }
 void Remove_AllOccurrence(char* str,const char ch,int idx){
 	int k;
@@ -80,9 +81,7 @@ void passwordgenerator(char password[],int n,int ans1,int ans2,int ans3,int ans4
 	char UpperCase[]="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	//array 4:for all special characters
 	char SpecialChar[]="!@#$%^&*?()";
-	//final array for storing randomly generated password
-	//to select the random Number
-	//inside the loop
+	//final array for storing randomly generated password to select the random Number inside the loop
 	randomNo=rand()%4;
 	int i=0;
 	//iterating over the length
@@ -122,6 +121,7 @@ void passwordgenerator(char password[],int n,int ans1,int ans2,int ans3,int ans4
 		}
 		i++;
 	}
+    password[i]='\0';
 }
 void printHeading(char* txt){
 	int l=strlen(txt);
@@ -136,11 +136,10 @@ void printHeading(char* txt){
 	printf("\n\n");
 }
 int main(){
-	
 	printHeading("GENERATE A STRONG RANDOM PASSWORD");
 	printf("\033[1;31mRules for generating a random password\n");
 	printf("________________________________________\n");
-	printf("1.Specify the length of the password\n");
+	printf("1.Specify the Maximum length of the password\n");
 	printf("2.Allow Numbers[0-9]\n");
 	printf("3.Allow special characters\n");
 	printf("4.Allow Uppercase[ABC]\n");
@@ -160,7 +159,7 @@ int main(){
 	scanf("%d",&ans3);
 	printf("Want to use Uppercase Alphabets (yes/no): \n");
 	scanf("%d",&ans4);
-	printf("Want to exclude duplicate characters (yes/np): \n");
+	printf("Want to exclude duplicate characters (yes/no): \n");
 	scanf("%d",&ans5);
 	printf("Want to exclude similar characters (yes/no): \n");
 	scanf("%d",&ans6);
@@ -175,7 +174,6 @@ int main(){
 		excludeSimilar(password);
 	}	
 	printf("%s",password);
-	
 	printf("\n\n");
 	//to repeatedly ask if the user wants to generate a new password
 	//or not.
