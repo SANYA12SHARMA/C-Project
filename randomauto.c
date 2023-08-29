@@ -173,6 +173,20 @@ int main(){
 	if(ans6==1){
 		excludeSimilar(password);
 	}	
+	FILE*ptr=fopen("common.txt","r");
+if(ptr==NULL){
+	printf("failed to open the file");
+	return 1;
+}	
+	char line[30];
+		while(fgets(line,sizeof(line),ptr)!=NULL){
+			line[strcspn(line,"\n")]='\0';
+					if(strcmp(line,password)==0){
+					printf("change the password");
+					fclose(ptr);
+					break;
+					}
+		}
 	printf("%s",password);
 	printf("\n\n");
 	//to repeatedly ask if the user wants to generate a new password
