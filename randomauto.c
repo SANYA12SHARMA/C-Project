@@ -78,7 +78,7 @@ typedef struct usersOptions{
 	int duplicateChar;
 	int similarChar;
 }user;
-void password_generator(char password[],int n,struct usersOptions user){
+void password_generator(char password[],int n,user u1){
 	int randomNum=0;
 	//initialise random number generator
 	srand((unsigned int)(time(NULL)));
@@ -94,7 +94,7 @@ void password_generator(char password[],int n,struct usersOptions user){
 	int i=0;
 	while(i<n){
 		if(randomNum==1){
-			if(user.numbers==1){
+			if(u1.numbers==1){
 				password[i]=Numbers[rand()%10];
 				randomNum=rand()%4;
 			}else{
@@ -102,7 +102,7 @@ void password_generator(char password[],int n,struct usersOptions user){
 				continue;
 			}
 		}else if(randomNum==2){
-			if(user.upperCase==2){
+			if(u1.upperCase==2){
 				password[i]=UpperCase[rand()%26];
 				randomNum=rand()%4;
 			}else{
@@ -110,7 +110,7 @@ void password_generator(char password[],int n,struct usersOptions user){
 				continue;
 			}
 		}else if(randomNum==3){
-			if(user.lowerCase==2){
+			if(u1.lowerCase==2){
 				password[i]=LowerCase[rand()%26];
 				randomNum=rand()%4;
 			}else{
@@ -118,7 +118,7 @@ void password_generator(char password[],int n,struct usersOptions user){
 				continue;
 			}
 		}else{
-			if(user.specialChar==4){
+			if(u1.specialChar==4){
 				password[i]=SpecialChar[rand()%11];
 				randomNum=rand()%4;
 			}else{
@@ -130,11 +130,11 @@ void password_generator(char password[],int n,struct usersOptions user){
 	}
 	password[i]='\0';
 	//exclude Duplicate Characters
-	if(user.duplicateChar==5){
+	if(u1.duplicateChar==5){
 		remove_duplicates(password);
 	}
 	//exclude Similar Characters
-	if(user.similarChar==6){
+	if(u1.similarChar==6){
 		remove_similar(password);
 	}	
 }
