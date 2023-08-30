@@ -70,18 +70,18 @@ void remove_duplicates(char* str){
 		remove_all_occurrences(str,str[i],i+1);
 	}	
 }
-struct usersOptions{
+typedef struct usersOptions{
 	int numbers;
 	int upperCase;
 	int lowerCase;
 	int specialChar;
 	int duplicateChar;
 	int similarChar;
-};
+}user;
 void password_generator(char password[],int n,struct usersOptions user){
 	int randomNum=0;
 	//initialise random number generator
-	srand((int)(time(NULL)));
+	srand((unsigned int)(time(NULL)));
 	randomNum=rand()%4;
 	//array for storing numbers
 	char Numbers[]="0123456789";
@@ -185,23 +185,23 @@ int main(){
 		printf("Invalid Length,Please Enter Again: ");
 		scanf("%d",&len);
 	}
-	struct usersOptions user;
+	user u1;
 	printf("\nPress 1 to include Numbers else Press -1. \n");
-	scanf("%d",&user.numbers);
+	scanf("%d",&u1.numbers);
 	printf("Press 2 to include Uppercase Alphabets else Press -1. \n");
-	scanf("%d",&user.upperCase);
+	scanf("%d",&u1.upperCase);
 	printf("Press 3 to include Lowercase Alphabets else Press -1. \n");
-	scanf("%d",&user.lowerCase);
+	scanf("%d",&u1.lowerCase);
 	printf("Press 4 to include Special Characters else Press -1. \n");
-	scanf("%d",&user.specialChar);
+	scanf("%d",&u1.specialChar);
 	printf("Press 5 to exclude Duplicate Characters else Press -1. \n");
-	scanf("%d",&user.duplicateChar);
+	scanf("%d",&u1.duplicateChar);
 	printf("Press 6 to exclude Similar Characters else Press -1. \n");
-	scanf("%d",&user.similarChar);
+	scanf("%d",&u1.similarChar);
 	printf("Your password is: ");
 	char password[len];
 	//calling the function
-	password_generator(password,len,user);	
+	password_generator(password,len,u1);	
 // 	FILE*ptr=fopen("common.txt","r");
 // if(ptr==NULL){
 // 	printf("failed to open the file");
@@ -225,7 +225,7 @@ int main(){
 		scanf("%d",&choice);
 		if(choice==1){
 			printf("Your new password is: ");	
-			password_generator(password,len,user);
+			password_generator(password,len,u1);
 			printf("%s",password);
 			printf("\n\n");
 		}else{
