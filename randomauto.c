@@ -18,9 +18,9 @@ void calculate(const char* password){
 		}
 	}
 	if(alpha>0 && digit>0 && special>0){
-		printf("\n\033[1;32mGreat! YOur password is strong\033[0m\n");
+		printf("\n\033[1;32mGreat! Your password is strong\033[0m\n");
 	}else if(alpha>0 && digit>0){
-		printf("\n\033[1;33mYour password is moderate\n We recommend you to add some special character\033[0m\n");
+		printf("\n\033[1;33mYour password is moderate.\n We recommend you to add some special characters.\033[0m\n");
 	}else{
 		printf("\n\033[1;31mYour password is weak!\033[0m\n");
 	}
@@ -71,12 +71,12 @@ void remove_duplicates(char* str){
 	}	
 }
 struct usersOptions{
-int numbers;
-int upperCase;
-int lowerCase;
-int specialChar;
-int duplicateChar;
-int similarChar;
+	int numbers;
+	int upperCase;
+	int lowerCase;
+	int specialChar;
+	int duplicateChar;
+	int similarChar;
 };
 void password_generator(char password[],int n,struct usersOptions user){
 	int randomNum=0;
@@ -167,32 +167,36 @@ int main(){
 	print_heading("GENERATE A RANDOM PASSWORD");
 	printf("\033[1;31m RULES \n");
 	printf("-------------------------------------------\n");
-	printf("Specify the Maximum Length of the Password\n");
-	printf("Press 1 to include Numbers[0-9]\n");
-	printf("Press 2 to include Uppercase Alphabets[ABC]\n");
-	printf("Press 3 to include Lowercase Alphabets[abc]\n");
-	printf("Press 4 to include Special Characters\n");
-	printf("Press 5 to exclude Duplicate Characters\n");
-	printf("Press 6 to exclude Similar Characters\n");
-	printf("Press 0 to Quit\n");
+	printf("->Specify the Maximum Length of the Password\n");
+	printf("->Press 1 to include Numbers[0-9]\n");
+	printf("->Press 2 to include Uppercase Alphabets[ABC]\n");
+	printf("->Press 3 to include Lowercase Alphabets[abc]\n");
+	printf("->Press 4 to include Special Characters\n");
+	printf("->Press 5 to exclude Duplicate Characters\n");
+	printf("->Press 6 to exclude Similar Characters\n");
+
 	printf("-------------------------------------------\n");
 	printf("\033[0m");
 	//length of password
 	int len;
 	printf("Enter the length of the Password: ");
 	scanf("%d",&len);
+	while(len<=6){
+		printf("Invalid Length,Please Enter Again: ");
+		scanf("%d",&len);
+	}
 	struct usersOptions user;
-	printf("Press 1 to include Numbers else -1 \n");
+	printf("\nPress 1 to include Numbers else Press -1. \n");
 	scanf("%d",&user.numbers);
-	printf("Press 2 to include Uppercase Alphabets else -1 \n");
+	printf("Press 2 to include Uppercase Alphabets else Press -1. \n");
 	scanf("%d",&user.upperCase);
-	printf("Press 3 to include Lowercase Alphabets else -1 \n");
+	printf("Press 3 to include Lowercase Alphabets else Press -1. \n");
 	scanf("%d",&user.lowerCase);
-	printf("Press 4 to include Special Characters else -1 \n");
+	printf("Press 4 to include Special Characters else Press -1. \n");
 	scanf("%d",&user.specialChar);
-	printf("Press 5 to exclude Duplicate Characters else -1 \n");
+	printf("Press 5 to exclude Duplicate Characters else Press -1. \n");
 	scanf("%d",&user.duplicateChar);
-	printf("Press 6 to exclude Similar Characters else -1 \n");
+	printf("Press 6 to exclude Similar Characters else Press -1. \n");
 	scanf("%d",&user.similarChar);
 	printf("Your password is: ");
 	char password[len];
@@ -214,8 +218,7 @@ int main(){
 // 		}
 	printf("%s",password);
 	printf("\n\n");
-	//to repeatedly ask if the user wants to generate a new password
-	//or not.
+	//Repeatedly ask if the user wants to generate a new password or not.
 	while(1){
 		int choice;
 		printf("Press 1 to generate a new password or press 0 to exit:");
@@ -226,13 +229,14 @@ int main(){
 			printf("%s",password);
 			printf("\n\n");
 		}else{
-			printf("Oops!! You have made an exit!!\n");
+			printf("Oops!! You have made an exit\n");
+			printf("Your Password is %s\n",password);
 			break;
 		}
 	}
-	printf("****************************\n");
-	printf("\e[4;37mPASSWORD STRENGTH\e[0m\n");
+	printf("\n******************************\n");
+	printf("\e[4;37mPASSWORD STRENGTH\e[0m");
 	calculate(password);
-	printf("****************************\n");
+	printf("******************************\n");
 	return 0;
 }
