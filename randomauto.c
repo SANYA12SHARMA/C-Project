@@ -93,40 +93,22 @@ void password_generator(char password[],int n,user u1){
 	char SpecialChar[]="!@#$%^&*?()";
 	int i=0;
 	while(i<n){
-		if(randomNum==1){
-			if(u1.numbers==1){
+		if(randomNum==1 && u1.numbers==1){
 				password[i]=Numbers[rand()%10];
-				randomNum=rand()%4;
-			}else{
-				randomNum=rand()%4;
-				continue;
-			}
-		}else if(randomNum==2){
-			if(u1.upperCase==2){
+				i++;
+		}else if(randomNum==2 && u1.upperCase==2){
 				password[i]=UpperCase[rand()%26];
-				randomNum=rand()%4;
-			}else{
-				randomNum=rand()%4;
-				continue;
-			}
-		}else if(randomNum==3){
-			if(u1.lowerCase==2){
+				i++;
+		}else if(randomNum==3 && u1.lowerCase==3){
 				password[i]=LowerCase[rand()%26];
-				randomNum=rand()%4;
-			}else{
-				randomNum=rand()%4;
-				continue;
-			}
+				i++;
 		}else{
 			if(u1.specialChar==4){
 				password[i]=SpecialChar[rand()%11];
-				randomNum=rand()%4;
-			}else{
-				randomNum=rand()%4;
-				continue;
+				i++;
 			}
 		}
-		i++;
+		randomNum=rand()%4;
 	}
 	password[i]='\0';
 	//exclude Duplicate Characters
