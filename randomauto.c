@@ -156,7 +156,6 @@ int main(){
 	printf("->Press 4 to include Special Characters\n");
 	printf("->Press 5 to exclude Duplicate Characters\n");
 	printf("->Press 6 to exclude Similar Characters\n");
-
 	printf("-------------------------------------------\n");
 	printf("\033[0m");
 	//length of password
@@ -184,20 +183,20 @@ int main(){
 	char password[len];
 	//calling the function
 	password_generator(password,len,u1);	
-// 	FILE*ptr=fopen("common.txt","r");
-// if(ptr==NULL){
-// 	printf("failed to open the file");
-// 	return 1;
-// }	
-// 	char line[30];
-// 		while(fgets(line,sizeof(line),ptr)!=NULL){
-// 			line[strcspn(line,"\n")]='\0';
-// 					if(strcmp(line,password)==0){
-// 					printf("change the password");
-// 					fclose(ptr);
-// 					break;
-// 					}
-// 		}
+	FILE* file=fopen("common.txt","r");
+	if(file==NULL){
+		printf("Failed to open the file.\n");
+		return 1;
+	}	
+	char line[30];
+	while(fgets(line,sizeof(line),file)!=NULL){
+		line[strcspn(line,"\n")]='\0';
+		if(strcmp(line,password)==0){
+			printf("change the password");
+			fclose(file);
+			break;
+		}
+	}
 	printf("%s",password);
 	printf("\n\n");
 	//Repeatedly ask if the user wants to generate a new password or not.
