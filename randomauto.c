@@ -25,6 +25,23 @@ void calculate(const char* password){
 		printf("\n\033[1;31mYour password is weak!\033[0m\n");
 	}
 }
+bool check_from_dictionary(char* password){
+	FILE* file=fopen("common.txt","r");
+	if(file==NULL){
+		printf("Failed to open the file.\n");
+		return 1;
+	}	
+	char line[30];
+	while(fgets(line,sizeof(line),file)!=NULL){
+		line[strcspn(line,"\n")]='\0';
+		if(strcmp(line,password)==0){
+			printf("change the password");
+			fclose(file);
+			return true;
+		}
+	}
+	return false;
+}
 bool is_similar(char c){
 	const char similarChars[]="iI1loO0";
 	for(int i=0;similarChars[i]!='\0';i++){
@@ -182,20 +199,10 @@ int main(){
 	printf("Your password is: ");
 	char password[len];
 	//calling the function
-	password_generator(password,len,u1);	
-	FILE* file=fopen("common.txt","r");
-	if(file==NULL){
-		printf("Failed to open the file.\n");
-		return 1;
-	}	
-	char line[30];
-	while(fgets(line,sizeof(line),file)!=NULL){
-		line[strcspn(line,"\n")]='\0';
-		if(strcmp(line,password)==0){
-			printf("change the password");
-			fclose(file);
-			break;
-		}
+	password_generator(password,len,u1);
+	while(check_from_dictionary(password)){
+		printf("Please try again: \n");
+		password_generator(password,len,u1);
 	}
 	printf("%s",password);
 	printf("\n\n");
