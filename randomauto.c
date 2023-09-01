@@ -268,11 +268,11 @@ int main()
 	
 	//Repeatedly ask the user to generate a password.
 	while(1){
-		int choice;
-		printf("Press 1 to generate a password or press 0 to exit:");
-		scanf("%d",&choice);
+		char choice;
+		printf("Type y to generate a password else 'n' to exit:");
+		scanf("%c",&choice);
 		
-		if(choice==1){
+		if(choice == 'y'){
 			printf("Your password is: ");
 			//calling the function
 			password_generator(password,len,u1);
