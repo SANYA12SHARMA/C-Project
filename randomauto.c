@@ -5,12 +5,27 @@
 #include <stdbool.h>
 #include <ctype.h>
 
+void store_passwords(const char* password)
+{
+	FILE* file=fopen("StorePasswords.txt","a");
+
+	if(file==NULL){
+		printf("Failed to open the file.\n");
+	}else{
+		fputs(password,file);
+		fputs("\n",file);
+	}
+}
 void calculate_strength(const char* password)
 {
 	int alpha = 0;
 	int digit = 0;
 	int special = 0;
 	
+	if(password[0] == '\0'){
+		printf("No password generated");
+		return;
+	}
 	for( int i = 0 ; password[i] != '\0' ; i++ )
 	{
 		if( isalpha(password[i]) != 0 ){
@@ -91,7 +106,6 @@ void remove_similar(char* str)
 	str[curr] = '\0';
 
 }
-
 void remove_all_occurrences(char* str, const char ch, int idx)
 {
 	int k;
@@ -108,7 +122,6 @@ void remove_all_occurrences(char* str, const char ch, int idx)
 		idx++;
 	}
 }
-
 void remove_duplicates(char* str)
 {
 	int len = strlen(str);
@@ -242,8 +255,8 @@ int main()
 	printf("Enter the length of the Password: ");
 	scanf("%d",&len);
 
-	//Length should be greater than or equal to 6
-	while(len <= 6)
+	//Length should be greater than 6 and less than 64 
+	while(len < 6 || len>64)
 	{
 		printf("Invalid Length, Please Enter Again: ");
 		scanf("%d",&len);
@@ -270,32 +283,35 @@ int main()
 	
 	//Repeatedly ask the user to generate a password.
 	while (1) {
-		char choice;
-		
-		printf("Type 'y' to generate a password or 'n' to exit: ");
-		scanf(" %c", &choice); // Adding a space before %c to skip whitespace characters
-		
-		if (choice == 'y') {
-			// Call the password_generator function
-			password_generator(password, len, u1);
-			
-			// Check if the password is from the dictionary
-			while (check_from_dictionary(password)) {
-				printf("Please try again: \n");
-				password_generator(password, len, u1);
-			}
+        char choice;
 
-			printf("Your password is: ");
-			printf("%s", password);
-			printf("\n\n");
-		} else if (choice == 'n') { 
-			printf("Exiting...\n");
-			break; // Exit the loop and the program
-		} else {
-			printf("Invalid input. Please enter 'y' or 'n'.\n");
-		}
-	}
-	
+        printf("Type 'y' to generate a password or 'n' to exit: ");
+        scanf(" %c", &choice); // Adding a space before %c to skip whitespace characters
+
+        if (choice == 'y') {
+
+            // Call the password_generator function
+            password_generator(password, len, u1);
+
+            // Check if the password is from the dictionary
+            while (check_from_dictionary(password)) {
+                printf("Please try again: \n");
+                password_generator(password, len, u1);
+            }
+
+			//store passwords in a file
+			store_passwords(password);
+			
+            printf("Your password is: ");
+            printf("%s", password);
+            printf("\n\n");
+        } else if (choice == 'n') {
+            printf("Exiting...\n");
+            break; // Exit the loop and the program
+        } else {
+            printf("Invalid input. Please enter 'y' or 'n'.\n");
+        }
+}
 	//check strength of the password
 	printf("\n******************************\n");
 	printf("\e[4;37mPASSWORD STRENGTH\e[0m");
@@ -306,3 +322,4 @@ int main()
 	
 	return 0;
 }
+
