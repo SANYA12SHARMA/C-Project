@@ -91,6 +91,7 @@ void remove_similar(char* str)
 	str[curr] = '\0';
 
 }
+
 void remove_all_occurrences(char* str, const char ch, int idx)
 {
 	int k;
@@ -107,6 +108,7 @@ void remove_all_occurrences(char* str, const char ch, int idx)
 		idx++;
 	}
 }
+
 void remove_duplicates(char* str)
 {
 	int len = strlen(str);
@@ -268,32 +270,32 @@ int main()
 	
 	//Repeatedly ask the user to generate a password.
 	while (1) {
-        char choice;
+		char choice;
+		
+		printf("Type 'y' to generate a password or 'n' to exit: ");
+		scanf(" %c", &choice); // Adding a space before %c to skip whitespace characters
+		
+		if (choice == 'y') {
+			// Call the password_generator function
+			password_generator(password, len, u1);
+			
+			// Check if the password is from the dictionary
+			while (check_from_dictionary(password)) {
+				printf("Please try again: \n");
+				password_generator(password, len, u1);
+			}
 
-        printf("Type 'y' to generate a password or 'n' to exit: ");
-        scanf(" %c", &choice); // Adding a space before %c to skip whitespace characters
-
-        if (choice == 'y') {
-
-            // Call the password_generator function
-            password_generator(password, len, u1);
-
-            // Check if the password is from the dictionary
-            while (check_from_dictionary(password)) {
-                printf("Please try again: \n");
-                password_generator(password, len, u1);
-            }
-
-            printf("Your password is: ");
-            printf("%s", password);
-            printf("\n\n");
-        } else if (choice == 'n') {
-            printf("Exiting...\n");
-            break; // Exit the loop and the program
-        } else {
-            printf("Invalid input. Please enter 'y' or 'n'.\n");
-        }
-}
+			printf("Your password is: ");
+			printf("%s", password);
+			printf("\n\n");
+		} else if (choice == 'n') { 
+			printf("Exiting...\n");
+			break; // Exit the loop and the program
+		} else {
+			printf("Invalid input. Please enter 'y' or 'n'.\n");
+		}
+	}
+	
 	//check strength of the password
 	printf("\n******************************\n");
 	printf("\e[4;37mPASSWORD STRENGTH\e[0m");
