@@ -117,85 +117,110 @@ void remove_duplicates(char* str)
 	
 	for(int i = 0; i< len; i++)
 	{
-		remove_all_occurrences(str,str[i],i+1);
+		remove_all_occurrences(str, str[i], i+1);
 	}	
 }
-typedef struct usersOptions{
+
+typedef struct usersOptions
+{
 	int numbers;
 	int upperCase;
 	int lowerCase;
 	int specialChar;
 	int duplicateChar;
 	int similarChar;
-}user;
-void password_generator(char password[],int n,user u1){
-	int randomNum=0;
+} user;
+
+void password_generator(char password[], int n, user u1)
+{
+	int randomNum = 0;
+	
 	//initialise random number generator
 	srand((unsigned int)(time(NULL)));
-	randomNum=rand()%4;
+	randomNum = rand() % 4;
+	
 	//array for storing numbers
-	char Numbers[]="0123456789";
+	char Numbers[] = "0123456789";
 	//array for storing lowercase alphabets
-	char LowerCase[]="abcdefghijklmnopqrstuvwxyz";
+	char LowerCase[] = "abcdefghijklmnopqrstuvwxyz";
 	//array for storing uppercase alphabets
-	char UpperCase[]="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	char UpperCase[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	//array for all special characters
-	char SpecialChar[]="!@#$%^&*?()";
+	char SpecialChar[] = "!@#$%^&*?()";
+	
 	int i=0;
-	while(i<n){
-		if(randomNum==1 && u1.numbers==1){
-				password[i]=Numbers[rand()%10];
+	while(i < n)
+	{
+		if(randomNum == 1 && u1.numbers == 1){
+				password[i] = Numbers[rand() % 10];
 				i++;
-		}else if(randomNum==2 && u1.upperCase==2){
-				password[i]=UpperCase[rand()%26];
+		}else if(randomNum == 2 && u1.upperCase == 2){
+				password[i] = UpperCase[rand() % 26];
 				i++;
-		}else if(randomNum==3 && u1.lowerCase==3){
-				password[i]=LowerCase[rand()%26];
+		}else if(randomNum == 3 && u1.lowerCase == 3){
+				password[i] = LowerCase[rand() % 26];
 				i++;
 		}else{
-			if(u1.specialChar==4){
-				password[i]=SpecialChar[rand()%11];
+			if(u1.specialChar == 4){
+				password[i] = SpecialChar[rand() % 11];
 				i++;
 			}
 		}
-		randomNum=rand()%4;
+		
+		randomNum = rand() % 4;
 	}
-	password[i]='\0';
+	
+	password[i] = '\0';
+	
 	//exclude Duplicate Characters
-	if(u1.duplicateChar==5){
+	if(u1.duplicateChar == 5){
 		remove_duplicates(password);
 	}
+	
 	//exclude Similar Characters
-	if(u1.similarChar==6){
+	if(u1.similarChar == 6){
 		remove_similar(password);
 	}	
 }
-void print_heading(char* txt){
-	printf("\n");
-	printf("\033[1;33m");
-	for(int i=0;i<25;i++){
+
+void print_heading(char* txt)
+{
+	printf("\n\033[1;33m");
+	
+	for(int i = 0 ; i < 25 ; i++)
+	{
 		printf(" ");
 	}
-	for(int i=0;i<strlen(txt)+4;i++){
+	for(int i = 0 ; i < strlen(txt) + 4 ; i++)
+	{
 		printf("*");
 	}
+	
 	printf("\n");
-	for(int i=0;i<25;i++){
+	
+	for(int i = 0 ; i < 25 ; i++)
+	{
 		printf(" ");
 	}
+	
 	printf("* %s *",txt);
 	printf("\n");
-	for(int i=0;i<25;i++){
+	
+	for(int i = 0 ; i < 25 ; i++)
+	{
 		printf(" ");
 	}
-	for(int i=0;i<strlen(txt)+4;i++){
+	for(int i = 0;i < strlen(txt) + 4 ; i++)
+	{
 		printf("*");
 	}
+	
 	printf("\033[0m");
 	printf("\n\n");
 }
 
-int main(){
+int main()
+{
 	print_heading("GENERATE A RANDOM PASSWORD");
 	printf("\033[1;31m RULES \n");
 	printf("-------------------------------------------\n");
@@ -208,15 +233,20 @@ int main(){
 	printf("->Press 6 to exclude Similar Characters\n");
 	printf("-------------------------------------------\n");
 	printf("\033[0m");
+	
 	//length of password
 	int len;
 	printf("Enter the length of the Password: ");
 	scanf("%d",&len);
-	while(len<=6){
-		printf("Invalid Length,Please Enter Again: ");
+	
+	while(len <= 6)
+	{
+		printf("Invalid Length, Please Enter Again: ");
 		scanf("%d",&len);
 	}
+	
 	user u1;
+	
 	printf("\nPress 1 to include Numbers else Press -1. \n");
 	scanf("%d",&u1.numbers);
 	printf("Press 2 to include Uppercase Alphabets else Press -1. \n");
@@ -229,24 +259,26 @@ int main(){
 	scanf("%d",&u1.duplicateChar);
 	printf("Press 6 to exclude Similar Characters else Press -1. \n");
 	scanf("%d",&u1.similarChar);
-	printf("Your password is: ");
+	
 	char password[len];
+	
 	//calling the function
 	password_generator(password,len,u1);
-	while(check_from_dictionary(password)){
-		printf("Please try again: \n");
-		password_generator(password,len,u1);
-	}
-	printf("%s",password);
-	printf("\n\n");
+	
 	//Repeatedly ask if the user wants to generate a new password or not.
 	while(1){
 		int choice;
-		printf("Press 1 to generate a new password or press 0 to exit:");
+		printf("Press 1 to generate a password or press 0 to exit:");
 		scanf("%d",&choice);
 		if(choice==1){
-			printf("Your new password is: ");	
+			printf("Your password is: ");	
 			password_generator(password,len,u1);
+			while(check_from_dictionary(password) == true)
+			{
+				printf("Please try again: \n");
+				password_generator(password,len,u1);
+			}
+			
 			printf("%s",password);
 			printf("\n\n");
 		}else{
@@ -255,9 +287,13 @@ int main(){
 			break;
 		}
 	}
+	
 	printf("\n******************************\n");
 	printf("\e[4;37mPASSWORD STRENGTH\e[0m");
+	
 	calculate(password);
+	
 	printf("******************************\n");
+	
 	return 0;
 }
