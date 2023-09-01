@@ -217,6 +217,7 @@ void print_heading(char* txt)
 	
 	printf("\033[0m");
 	printf("\n\n");
+	
 }
 
 int main()
@@ -238,15 +239,18 @@ int main()
 	int len;
 	printf("Enter the length of the Password: ");
 	scanf("%d",&len);
-	
+
+	//length should be greater than or equal to 6
 	while(len <= 6)
 	{
 		printf("Invalid Length, Please Enter Again: ");
 		scanf("%d",&len);
 	}
-	
+
+	//User-defined structure
 	user u1;
-	
+
+	//Ask user the specifications to generate a password
 	printf("\nPress 1 to include Numbers else Press -1. \n");
 	scanf("%d",&u1.numbers);
 	printf("Press 2 to include Uppercase Alphabets else Press -1. \n");
@@ -262,17 +266,18 @@ int main()
 	
 	char password[len];
 	
-	//calling the function
-	password_generator(password,len,u1);
-	
-	//Repeatedly ask if the user wants to generate a new password or not.
+	//Repeatedly ask the user to generate a password.
 	while(1){
 		int choice;
 		printf("Press 1 to generate a password or press 0 to exit:");
 		scanf("%d",&choice);
+		
 		if(choice==1){
-			printf("Your password is: ");	
+			printf("Your password is: ");
+			//calling the function
 			password_generator(password,len,u1);
+
+			//check if password is from dictionary or not.
 			while(check_from_dictionary(password) == true)
 			{
 				printf("Please try again: \n");
@@ -287,7 +292,8 @@ int main()
 			break;
 		}
 	}
-	
+
+	//check strength of the password
 	printf("\n******************************\n");
 	printf("\e[4;37mPASSWORD STRENGTH\e[0m");
 	
