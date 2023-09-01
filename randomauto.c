@@ -5,7 +5,7 @@
 #include <stdbool.h>
 #include <ctype.h>
 
-void calculate(const char* password)
+void calculate_strength(const char* password)
 {
 	int alpha = 0;
 	int digit = 0;
@@ -43,9 +43,9 @@ bool check_from_dictionary(char* password)
 	
 	char line[30];
 	
-	while(fgets(line,sizeof(line),file) != NULL)
+	while( fgets( line, sizeof(line), file ) != NULL )
 	{
-		line[strcspn(line,"\n")] = '\0';
+		line[strcspn(line ,"\n")] = '\0';
 		
 		if(strcmp(line,password) == 0){
 			printf("change the password");
@@ -297,7 +297,7 @@ int main()
 	printf("\n******************************\n");
 	printf("\e[4;37mPASSWORD STRENGTH\e[0m");
 	
-	calculate(password);
+	calculate_strength(password);
 	
 	printf("******************************\n");
 	
