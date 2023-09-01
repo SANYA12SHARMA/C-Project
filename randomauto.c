@@ -11,20 +11,20 @@ void calculate_strength(const char* password)
 	int digit = 0;
 	int special = 0;
 	
-	for(int i = 0 ; password[i] != '\0' ; i++)
+	for( int i = 0 ; password[i] != '\0' ; i++ )
 	{
-		if(isalpha(password[i]) != 0){
+		if( isalpha(password[i]) != 0 ){
 			alpha++;
-		}else if(isdigit(password[i]) != 0){
+		}else if( isdigit(password[i]) != 0 ){
 			digit++;
 		}else{
 			special++;
 		}
 	}
 	
-	if(alpha > 0 && digit > 0 && special > 0){
+	if( alpha > 0 && digit > 0 && special > 0 ){
 		printf("\n\033[1;32mGreat! Your password is strong\033[0m\n");
-	}else if(alpha > 0 && digit> 0){
+	}else if( alpha > 0 && digit> 0 ){
 		printf("\n\033[1;33mYour password is moderate.Add some special characters.\033[0m\n");
 	}else{
 		printf("\n\033[1;31mYour password is weak!\033[0m\n");
@@ -32,11 +32,11 @@ void calculate_strength(const char* password)
 	
 }
 
-bool check_from_dictionary(char* password)
+bool check_from_dictionary(const char* password)
 {
 	FILE* file = fopen("common.txt","r");
 	
-	if(file == NULL){
+	if( file == NULL ){
 		printf("Failed to open the file.\n");
 		return false;
 	}	
@@ -61,9 +61,9 @@ bool is_similar(char c)
 {
 	const char similarChars[] = "iI1loO0";
 	
-	for(int i = 0 ; similarChars[i] != '\0'; i++)
+	for( int i = 0 ; similarChars[i] != '\0'; i++ )
 	{
-		if(c == similarChars[i]){
+		if( c == similarChars[i] ){
 			return true;
 		}
 	}
@@ -80,9 +80,9 @@ void remove_similar(char* str)
 		return;
 	}
 	
-	for(int i = 0 ; i < len ; i++)
+	for( int i = 0 ; i < len ; i++ )
 	{
-		if(!is_similar(str[i])){
+		if( !is_similar(str[i]) ){
 			str[curr] = str[i];
 			curr++;
 		}
@@ -94,10 +94,10 @@ void remove_similar(char* str)
 void remove_all_occurrences(char* str, const char ch, int idx)
 {
 	int k;
-	while(str[idx] != '\0')
+	while( str[idx] != '\0' )
 	{
-		if(str[idx] == ch){
-			for(k = idx ; str[k] != '\0' ; k++)
+		if( str[idx] == ch ){
+			for( k = idx ; str[k] != '\0' ; k++ )
 			{
 				str[k] = str[k+1];
 			}
@@ -115,7 +115,7 @@ void remove_duplicates(char* str)
 		return;
 	}
 	
-	for(int i = 0; i< len; i++)
+	for( int i = 0; i < len; i++ )
 	{
 		remove_all_occurrences(str, str[i], i+1);
 	}	
@@ -149,19 +149,19 @@ void password_generator(char password[], int n, user u1)
 	char SpecialChar[] = "!@#$%^&*?()";
 	
 	int i=0;
-	while(i < n)
+	while( i < n )
 	{
-		if(randomNum == 1 && u1.numbers == 1){
+		if( randomNum == 1 && u1.numbers == 1 ){
 				password[i] = Numbers[rand() % 10];
 				i++;
-		}else if(randomNum == 2 && u1.upperCase == 2){
+		}else if( randomNum == 2 && u1.upperCase == 2 ){
 				password[i] = UpperCase[rand() % 26];
 				i++;
-		}else if(randomNum == 3 && u1.lowerCase == 3){
+		}else if( randomNum == 3 && u1.lowerCase == 3 ){
 				password[i] = LowerCase[rand() % 26];
 				i++;
 		}else{
-			if(u1.specialChar == 4){
+			if( u1.specialChar == 4 ){
 				password[i] = SpecialChar[rand() % 11];
 				i++;
 			}
@@ -240,7 +240,7 @@ int main()
 	printf("Enter the length of the Password: ");
 	scanf("%d",&len);
 
-	//length should be greater than or equal to 6
+	//Length should be greater than or equal to 6
 	while(len <= 6)
 	{
 		printf("Invalid Length, Please Enter Again: ");
@@ -267,32 +267,33 @@ int main()
 	char password[len];
 	
 	//Repeatedly ask the user to generate a password.
-	while(1){
-		char choice;
-		printf("Type y to generate a password else 'n' to exit:");
-		scanf("%c",&choice);
-		
-		if(choice == 'y'){
-			printf("Your password is: ");
-			//calling the function
-			password_generator(password,len,u1);
+	while (1) {
+        char choice;
 
-			//check if password is from dictionary or not.
-			while(check_from_dictionary(password) == true)
-			{
-				printf("Please try again: \n");
-				password_generator(password,len,u1);
-			}
-			
-			printf("%s",password);
-			printf("\n\n");
-		}else{
-			printf("Oops!! You have made an exit\n");
-			printf("Your Password is %s\n",password);
-			break;
-		}
-	}
+        printf("Type 'y' to generate a password or 'n' to exit: ");
+        scanf(" %c", &choice); // Adding a space before %c to skip whitespace characters
 
+        if (choice == 'y') {
+
+            // Call the password_generator function
+            password_generator(password, len, u1);
+
+            // Check if the password is from the dictionary
+            while (check_from_dictionary(password)) {
+                printf("Please try again: \n");
+                password_generator(password, len, u1);
+            }
+
+            printf("Your password is: ");
+            printf("%s", password);
+            printf("\n\n");
+        } else if (choice == 'n') {
+            printf("Exiting...\n");
+            break; // Exit the loop and the program
+        } else {
+            printf("Invalid input. Please enter 'y' or 'n'.\n");
+        }
+}
 	//check strength of the password
 	printf("\n******************************\n");
 	printf("\e[4;37mPASSWORD STRENGTH\e[0m");
