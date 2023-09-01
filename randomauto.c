@@ -4,86 +4,119 @@
 #include <string.h>
 #include <stdbool.h>
 #include <ctype.h>
-void calculate(const char* password){
-	int alpha=0;
-	int digit=0;
-	int special=0;
-	for(int i=0;password[i]!='\0';i++){
-		if(isalpha(password[i])!=0){
+
+void calculate(const char* password)
+{
+	int alpha = 0;
+	int digit = 0;
+	int special = 0;
+	
+	for(int i = 0 ; password[i] != '\0' ; i++)
+	{
+		if(isalpha(password[i]) != 0){
 			alpha++;
-		}else if(isdigit(password[i])!=0){
+		}else if(isdigit(password[i]) != 0){
 			digit++;
 		}else{
 			special++;
 		}
 	}
-	if(alpha>0 && digit>0 && special>0){
+	
+	if(alpha > 0 && digit > 0 && special > 0){
 		printf("\n\033[1;32mGreat! Your password is strong\033[0m\n");
-	}else if(alpha>0 && digit>0){
-		printf("\n\033[1;33mYour password is moderate.\n We recommend you to add some special characters.\033[0m\n");
+	}else if(alpha > 0 && digit> 0){
+		printf("\n\033[1;33mYour password is moderate.Add some special characters.\033[0m\n");
 	}else{
 		printf("\n\033[1;31mYour password is weak!\033[0m\n");
 	}
+	
 }
-bool check_from_dictionary(char* password){
-	FILE* file=fopen("common.txt","r");
-	if(file==NULL){
+
+bool check_from_dictionary(char* password)
+{
+	FILE* file = fopen("common.txt","r");
+	
+	if(file == NULL){
 		printf("Failed to open the file.\n");
-		return 1;
+		return false;
 	}	
+	
 	char line[30];
-	while(fgets(line,sizeof(line),file)!=NULL){
-		line[strcspn(line,"\n")]='\0';
-		if(strcmp(line,password)==0){
+	
+	while(fgets(line,sizeof(line),file) != NULL)
+	{
+		line[strcspn(line,"\n")] = '\0';
+		
+		if(strcmp(line,password) == 0){
 			printf("change the password");
 			fclose(file);
 			return true;
 		}
 	}
+	
 	return false;
 }
-bool is_similar(char c){
-	const char similarChars[]="iI1loO0";
-	for(int i=0;similarChars[i]!='\0';i++){
-		if(c==similarChars[i]){
+
+bool is_similar(char c)
+{
+	const char similarChars[] = "iI1loO0";
+	
+	for(int i = 0 ; similarChars[i] != '\0'; i++)
+	{
+		if(c == similarChars[i]){
 			return true;
 		}
 	}
+	
 	return false;
 }
-void remove_similar(char* str){
-	int len=strlen(str);
-	int curr=0;
-	if(len<=1){
+
+void remove_similar(char* str)
+{
+	int len = strlen(str);
+	int curr = 0;
+	
+	if(len <= 1){
 		return;
 	}
-	for(int i=0;i<len;i++){
+	
+	for(int i = 0 ; i < len ; i++)
+	{
 		if(!is_similar(str[i])){
-			str[curr]=str[i];
+			str[curr] = str[i];
 			curr++;
 		}
 	}
-    str[curr]='\0';
+	
+	str[curr] = '\0';
 
 }
-void remove_all_occurrences(char* str,const char ch,int idx){
+void remove_all_occurrences(char* str, const char ch, int idx)
+{
 	int k;
-	while(str[idx]!='\0'){
-		if(str[idx]==ch){
-			for(k=idx;str[k]!='\0';k++){
-				str[k]=str[k+1];
+	while(str[idx] != '\0')
+	{
+		if(str[idx] == ch){
+			for(k = idx ; str[k] != '\0' ; k++)
+			{
+				str[k] = str[k+1];
 			}
-			str[k]='\0';
+			str[k] = '\0';
 		}
+		
 		idx++;
 	}
 }
-void remove_duplicates(char* str){
-	int len=strlen(str);
-	if(len<=1){
+void remove_duplicates(char* str)
+{
+	int len = strlen(str);
+	
+	if(len <= 1){
 		return;
 	}
-	for(int i=0;i<len;i++){
+	
+	for(int i = 0; i< len; i++)
+	{
 		remove_all_occurrences(str,str[i],i+1);
 	}	
 }
