@@ -36,6 +36,7 @@ void calculate_strength(const char* password)
 		printf("No password generated");
 		return;
 	}
+	
 	for( int i = 0 ; password[i] != '\0' ; i++ )
 	{
 		if( isalpha(password[i]) != 0 ){
@@ -116,6 +117,7 @@ void remove_similar(char* str)
 	str[curr] = '\0';
 
 }
+
 void remove_all_occurrences(char* str, const char ch, int idx)
 {
 	int k;
@@ -132,6 +134,7 @@ void remove_all_occurrences(char* str, const char ch, int idx)
 		idx++;
 	}
 }
+
 void remove_duplicates(char* str)
 {
 	int len = strlen(str);
@@ -144,13 +147,6 @@ void remove_duplicates(char* str)
 	{
 		remove_all_occurrences(str, str[i], i+1);
 	}	
-}
-
-// Function to check if all options are excluded
-int allOptionsExcluded(user u) 
-{
-    return (u.numbers == -1 && u.upperCase == -1 &&
-            u.lowerCase == -1 && u.specialChar == -1);
 }
 
 void password_generator(char password[], int n, user u1)
@@ -206,8 +202,14 @@ void password_generator(char password[], int n, user u1)
 	}	
 }
 
+// Function to check if all options are excluded
+int all_options_excluded(user u) 
+{
+    return (u.numbers == -1 && u.upperCase == -1 && u.lowerCase == -1 && u.specialChar == -1);
+}
+
 // Function to get user input for an option with confirmation
-int getUserOption(const char *message) 
+int get_user_option(const char *message) 
 {
     int choice;
 
@@ -292,12 +294,12 @@ int main()
 	user u1;
 
 	//Ask user the specifications to generate a password
-	u1.numbers = getUserOption("Include numbers in the password?");
-    u1.upperCase = getUserOption("Include uppercase letters in the password?");
-    u1.lowerCase = getUserOption("Include lowercase letters in the password?");
-    u1.specialChar = getUserOption("Include special characters in the password?");
-    u1.duplicateChar = getUserOption("Remove duplicate characters in the password?");
-    u1.similarChar = getUserOption("Remove similar characters in the password?");
+	u1.numbers = get_user_option("Include numbers in the password?");
+	u1.upperCase = get_user_option("Include uppercase letters in the password?");
+	u1.lowerCase = get_user_option("Include lowercase letters in the password?");
+	u1.specialChar = get_user_option("Include special characters in the password?");
+	u1.duplicateChar = get_user_option("Remove duplicate characters in the password?");
+	u1.similarChar = get_user_option("Remove similar characters in the password?");
 	
 	char password[len];
 	
@@ -305,38 +307,38 @@ int main()
 	while (1) {
 		char choice;
 
-        printf("Type 'y' to generate a password or 'n' to exit: ");
-        scanf(" %c", &choice); // Adding a space before %c to skip whitespace characters
+		printf("Type 'y' to generate a password or 'n' to exit: ");
+		scanf(" %c", &choice); // Adding a space before %c to skip whitespace characters
 
-        if (choice == 'y') {
-			 if (allOptionsExcluded(u1)) {
-        printf("Error: All password options are excluded.\n");
-		printf("Error: Password generation failed...\n");
-        return 0;
-    }
-
-            // Call the password_generator function
-            password_generator(password, len, u1);
-
-            // Check if the password is from the dictionary
-            while (check_from_dictionary(password)) {
-                printf("Please try again: \n");
-                password_generator(password, len, u1);
-            }
+		if (choice == 'y') {
+			if (all_options_excluded(u1)) {
+				printf("Error: All password options are excluded.\n");
+				printf("Error: Password generation failed...\n");
+				return 0;
+			}
+			// Call the password_generator function
+			password_generator(password, len, u1);
+			
+			// Check if the password is from the dictionary
+			while (check_from_dictionary(password)) {
+				printf("Please try again: \n");
+				password_generator(password, len, u1);
+			}
 
 			//store passwords in a file
 			store_passwords(password);
 			
-            printf("Your password is: ");
-            printf("%s", password);
-            printf("\n\n");
-        } else if (choice == 'n') {
-            printf("Exit...\n");
-            break; // Exit the loop 
-        } else {
-            printf("Invalid input. Please enter 'y' or 'n'.\n");
-        }
+			printf("Your password is: ");
+			printf("%s", password);
+			printf("\n\n");
+		} else if (choice == 'n') {
+			printf("Exit...\n");
+			break; // Exit the loop 
+		} else {
+			printf("Invalid input. Please enter 'y' or 'n'.\n");
+		}
 	}
+	
 	//check strength of the password
 	printf("\n******************************\n");
 	printf("\e[4;37mPASSWORD STRENGTH\e[0m");
