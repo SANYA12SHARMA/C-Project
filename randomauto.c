@@ -5,6 +5,16 @@
 #include <stdbool.h>
 #include <ctype.h>
 
+typedef struct usersOptions
+{
+	int numbers;
+	int upperCase;
+	int lowerCase;
+	int specialChar;
+	int duplicateChar;
+	int similarChar;
+} user;
+
 void store_passwords(const char* password)
 {
 	FILE* file=fopen("StorePasswords.txt","a");
@@ -136,18 +146,16 @@ void remove_duplicates(char* str)
 	}	
 }
 
-typedef struct usersOptions
+// Function to check if all options are excluded
+int allOptionsExcluded(user u) 
 {
-	int numbers;
-	int upperCase;
-	int lowerCase;
-	int specialChar;
-	int duplicateChar;
-	int similarChar;
-} user;
+    return (u.numbers == -1 && u.upperCase == -1 &&
+            u.lowerCase == -1 && u.specialChar == -1);
+}
 
 void password_generator(char password[], int n, user u1)
 {
+	 
 	int randomNum = 0;
 	
 	//initialise random number generator
@@ -169,14 +177,14 @@ void password_generator(char password[], int n, user u1)
 		if( randomNum == 1 && u1.numbers == 1 ){
 				password[i] = Numbers[rand() % 10];
 				i++;
-		}else if( randomNum == 2 && u1.upperCase == 2 ){
+		}else if( randomNum == 2 && u1.upperCase == 1 ){
 				password[i] = UpperCase[rand() % 26];
 				i++;
-		}else if( randomNum == 3 && u1.lowerCase == 3 ){
+		}else if( randomNum == 3 && u1.lowerCase == 1 ){
 				password[i] = LowerCase[rand() % 26];
 				i++;
 		}else{
-			if( u1.specialChar == 4 ){
+			if( u1.specialChar == 1 ){
 				password[i] = SpecialChar[rand() % 11];
 				i++;
 			}
@@ -187,15 +195,32 @@ void password_generator(char password[], int n, user u1)
 	
 	password[i] = '\0';
 	
-	//exclude Duplicate Characters
-	if(u1.duplicateChar == 5){
+	//Remove Duplicate Characters
+	if(u1.duplicateChar == 1){
 		remove_duplicates(password);
 	}
 	
-	//exclude Similar Characters
-	if(u1.similarChar == 6){
+	//Remove Similar Characters
+	if(u1.similarChar == 1){
 		remove_similar(password);
 	}	
+}
+
+// Function to get user input for an option with confirmation
+int getUserOption(const char *message) 
+{
+    int choice;
+
+    printf("%s\n", message);
+    printf("Press 1 to include the following option or -1 to not: ");
+    scanf("%d", &choice);
+
+    if (choice != 1 && choice != -1) {
+        printf("Invalid choice. Please enter 1 to include or -1 to not.\n");
+        return getUserOption(message); // Recursive call for input validation
+    }
+
+    return choice;
 }
 
 void print_heading(char* txt)
@@ -241,12 +266,13 @@ int main()
 	printf("\033[1;31m RULES \n");
 	printf("-------------------------------------------\n");
 	printf("->Specify the Maximum Length of the Password\n");
-	printf("->Press 1 to include Numbers[0-9]\n");
-	printf("->Press 2 to include Uppercase Alphabets[ABC]\n");
-	printf("->Press 3 to include Lowercase Alphabets[abc]\n");
-	printf("->Press 4 to include Special Characters\n");
-	printf("->Press 5 to exclude Duplicate Characters\n");
-	printf("->Press 6 to exclude Similar Characters\n");
+	printf("->Press 1 to include following options else Press -1 to exclude.\n");
+	printf("=>Numbers[0-9]\n");
+	printf("=>Uppercase Alphabets[ABC]\n");
+	printf("=>Lowercase Alphabets[abc]\n");
+	printf("=>Special Characters\n");
+	printf("=>Remove Duplicate Characters\n");
+	printf("=>Remove Similar Characters\n");
 	printf("-------------------------------------------\n");
 	printf("\033[0m");
 	
@@ -255,7 +281,7 @@ int main()
 	printf("Enter the length of the Password: ");
 	scanf("%d",&len);
 
-	//Length should be greater than 6 and less than 64 
+	//Length should be greater than or equal to 6 and less than  or equal to 64 
 	while(len < 6 || len>64)
 	{
 		printf("Invalid Length, Please Enter Again: ");
@@ -266,29 +292,28 @@ int main()
 	user u1;
 
 	//Ask user the specifications to generate a password
-	printf("\nPress 1 to include Numbers else Press -1. \n");
-	scanf("%d",&u1.numbers);
-	printf("Press 2 to include Uppercase Alphabets else Press -1. \n");
-	scanf("%d",&u1.upperCase);
-	printf("Press 3 to include Lowercase Alphabets else Press -1. \n");
-	scanf("%d",&u1.lowerCase);
-	printf("Press 4 to include Special Characters else Press -1. \n");
-	scanf("%d",&u1.specialChar);
-	printf("Press 5 to exclude Duplicate Characters else Press -1. \n");
-	scanf("%d",&u1.duplicateChar);
-	printf("Press 6 to exclude Similar Characters else Press -1. \n");
-	scanf("%d",&u1.similarChar);
+	u1.numbers = getUserOption("Include numbers in the password?");
+    u1.upperCase = getUserOption("Include uppercase letters in the password?");
+    u1.lowerCase = getUserOption("Include lowercase letters in the password?");
+    u1.specialChar = getUserOption("Include special characters in the password?");
+    u1.duplicateChar = getUserOption("Remove duplicate characters in the password?");
+    u1.similarChar = getUserOption("Remove similar characters in the password?");
 	
 	char password[len];
 	
 	//Repeatedly ask the user to generate a password.
 	while (1) {
-        char choice;
+		char choice;
 
         printf("Type 'y' to generate a password or 'n' to exit: ");
         scanf(" %c", &choice); // Adding a space before %c to skip whitespace characters
 
         if (choice == 'y') {
+			 if (allOptionsExcluded(u1)) {
+        printf("Error: All password options are excluded.\n");
+		printf("Error: Password generation failed...\n");
+        return 0;
+    }
 
             // Call the password_generator function
             password_generator(password, len, u1);
@@ -306,12 +331,12 @@ int main()
             printf("%s", password);
             printf("\n\n");
         } else if (choice == 'n') {
-            printf("Exiting...\n");
-            break; // Exit the loop and the program
+            printf("Exit...\n");
+            break; // Exit the loop 
         } else {
             printf("Invalid input. Please enter 'y' or 'n'.\n");
         }
-}
+	}
 	//check strength of the password
 	printf("\n******************************\n");
 	printf("\e[4;37mPASSWORD STRENGTH\e[0m");
@@ -322,4 +347,5 @@ int main()
 	
 	return 0;
 }
+
 
