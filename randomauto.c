@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <ctype.h>
+#include <math.h>
 
 typedef struct usersOptions
 {
@@ -31,11 +32,6 @@ void calculate_strength(const char* password)
 	int alpha = 0;
 	int digit = 0;
 	int special = 0;
-	
-	if(password[0] == '\0'){
-		printf("No password generated");
-		return;
-	}
 	
 	for( int i = 0 ; password[i] != '\0' ; i++ )
 	{
@@ -149,7 +145,7 @@ void remove_duplicates(char* str)
 	}	
 }
 
-void password_generator(char password[], int n, user u1)
+void password_generator(char* password, int n, user u1)
 {
 	 
 	int randomNum = 0;
@@ -200,6 +196,13 @@ void password_generator(char password[], int n, user u1)
 	if(u1.similarChar == 1){
 		remove_similar(password);
 	}	
+
+	// Handle empty password after removal
+    if (strlen(password) == 0){
+
+        printf("Password became empty after removing duplicates or similar characters. Regenerating...\n");
+        password_generator(password, n, u1);
+    }
 }
 
 // Function to check if all options are excluded
@@ -219,7 +222,7 @@ int get_user_option(const char *message)
 
     if (choice != 1 && choice != -1) {
         printf("Invalid choice. Please enter 1 to include or -1 to not.\n");
-        return getUserOption(message); // Recursive call for input validation
+        return get_user_option(message); // Recursive call for input validation
     }
 
     return choice;
@@ -301,7 +304,7 @@ int main()
 	u1.duplicateChar = get_user_option("Remove duplicate characters in the password?");
 	u1.similarChar = get_user_option("Remove similar characters in the password?");
 	
-	char password[len];
+	char *password=(char*)malloc(len);
 	
 	//Repeatedly ask the user to generate a password.
 	while (1) {
@@ -314,7 +317,7 @@ int main()
 			if (all_options_excluded(u1)) {
 				printf("Error: All password options are excluded.\n");
 				printf("Error: Password generation failed...\n");
-				return 0;
+				return 1;
 			}
 			// Call the password_generator function
 			password_generator(password, len, u1);
@@ -325,12 +328,23 @@ int main()
 				password_generator(password, len, u1);
 			}
 
-			//store passwords in a file
-			store_passwords(password);
-			
-			printf("Your password is: ");
-			printf("%s", password);
-			printf("\n\n");
+			// Check if the password is empty
+            if (strlen(password) == 0) {
+                printf("Password is empty. Calculating strength is not possible.\n");
+            } else {
+                // Store passwords in a file
+                store_passwords(password);
+                
+                printf("Your password is: %s\n\n", password);
+                
+                // Check strength of the password
+                printf("\n******************************\n");
+                printf("\e[4;37mPASSWORD STRENGTH\e[0m");
+                
+                calculate_strength(password);
+                
+                printf("******************************\n");
+            }
 		} else if (choice == 'n') {
 			printf("Exit...\n");
 			break; // Exit the loop 
@@ -338,14 +352,8 @@ int main()
 			printf("Invalid input. Please enter 'y' or 'n'.\n");
 		}
 	}
-	
-	//check strength of the password
-	printf("\n******************************\n");
-	printf("\e[4;37mPASSWORD STRENGTH\e[0m");
-	
-	calculate_strength(password);
-	
-	printf("******************************\n");
+
+	free(password);//deallocate the memory
 	
 	return 0;
 }
