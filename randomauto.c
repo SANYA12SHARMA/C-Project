@@ -61,34 +61,38 @@ void decrypt(char givenMessage[], int shiftValue)
 
 void decryptfile()
 {
-	 FILE* inputFile = fopen("StorePasswords.txt", "r");
+    FILE* inputFile = fopen("StorePasswords.txt", "r");
     if (inputFile == NULL) {
         perror("Failed to open the input file");
         return ;
     }
- fseek(inputFile, 0, SEEK_END); // Move to the end of the file
+
+    fseek(inputFile, 0, SEEK_END); // Move to the end of the file
     long offset = -1;
     int foundNonEmptyLine = 0;
     char character;
 
-    while (ftell(inputFile) > 0) {
+    while (ftell(inputFile) >= 0) { // Change the condition to ftell(inputFile) >= 0
         fseek(inputFile, offset, SEEK_END);
         character = fgetc(inputFile);
 
-        if (character == '\n') {
-            if (foundNonEmptyLine) {
-                // This is the end of the last non-empty line
-                break;
-            }
+        if (character == '\n' && foundNonEmptyLine) {
+            // This is the end of the last non-empty line
+            break;
         } else if (!isspace(character)) {
             // Found a non-empty character, mark it
             foundNonEmptyLine = 1;
         }
 
+        if (ftell(inputFile) == 0) {
+            // Reached the beginning of the file, break to handle the first line case
+            break;
+        }
+
         offset--;
     }
 
-if (!foundNonEmptyLine) {
+    if (!foundNonEmptyLine) {
         // No non-empty lines found, handle this case accordingly
         fclose(inputFile);
         return ;
@@ -111,30 +115,37 @@ if (!foundNonEmptyLine) {
         perror("Failed to read the last non-empty line");
         free(lastLine);
         fclose(inputFile);
-        return ;
+        return;
     }
 
-char line[100];
-strcpy(line,lastLine);
+    // Remove the newline character, if it exists, from the last line
+    char* newlinePosition = strchr(lastLine, '\n');
+    if (newlinePosition != NULL) {
+        *newlinePosition = '\0'; // Replace '\n' with '\0' to terminate the string
+    }
+    char line[100];
+    strcpy(line,lastLine);
     free(lastLine);
-            FILE* outputFile = fopen("decrypted_passwords.txt", "a");
+
+    FILE* outputFile = fopen("decrypted_passwords.txt", "a");
     if (outputFile == NULL) {
         perror("Failed to open the output file");
         fclose(inputFile);
         return ;
     }
-        // Decrypt the line read from the input file
-        decrypt(line, 3);
+    
+    // Decrypt the line read from the input file
+    decrypt(line, 3);
 
-        // Write the decrypted line to the output file
-        fputs(line, outputFile);
-		fputs("\n",outputFile);    
+    // Write the decrypted line to the output file
+    fputs(line, outputFile);
+    fputs("\n",outputFile);    
 
     // Close the input and output files
     fclose(inputFile);
     fclose(outputFile);
-
 }
+
 
 void calculate_strength(const char* password)
 {
