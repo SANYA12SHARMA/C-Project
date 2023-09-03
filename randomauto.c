@@ -40,6 +40,7 @@ char shiftCharacter(char c, int shiftValue)
     } else {
         int specialCharacterIndex = getSpecialCharacterIndex(c);
         if (specialCharacterIndex == -1) {
+            printf("Unidentified character found: %c\n", c);
             return '\0';
         } else {
             return specialCharacterList[(specialCharacterIndex - shiftValue + strlen(specialCharacterList)) % strlen(specialCharacterList)];
@@ -139,6 +140,10 @@ void decryptfile()
         fclose(inputFile);
         return ;
     }
+    fseek(outputFile, 0, SEEK_END);
+    if(ftell(outputFile)==0){
+        fputs("Decrypted passwords:\n",outputFile);
+    }
     // Decrypt the line read from the input file
     decrypt(line, 3);
 
@@ -190,6 +195,7 @@ char shiftCharactere(char c, int shiftValue)
     } else {
         int specialCharacterIndex = getSpecialCharacterIndex(c);
         if (specialCharacterIndex == -1) {
+            printf("Unidentified character found: %c\n", c);
             return '\0';
         } else {
             return specialCharacterList[(specialCharacterIndex + shiftValue) % strlen(specialCharacterList)];
@@ -228,11 +234,11 @@ void store_passwords(const char *ptr)
         printf("Failed to open store the file.\n");
         return;
     }
+    // Encrypt the password and store it
     fseek(file, 0, SEEK_END);
     if(ftell(file)==0){
         fputs("Encrypted passwords:\n",file);
     }
-    // Encrypt the password and store it
     char* encryptedPassword = encrypt(ptr, 3);
 
     if (encryptedPassword != NULL) {
