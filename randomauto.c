@@ -64,77 +64,92 @@ void decryptfile()
     FILE* inputFile = fopen("StorePasswords.txt", "r");
     if (inputFile == NULL) {
         perror("Failed to open the input file");
-        return;
+        return ;
     }
-
+    
+    long fileLength = 0; // Variable to store the length of the file
     fseek(inputFile, 0, SEEK_END); // Move to the end of the file
-    long fileLength = ftell(inputFile);
-
+    fileLength = ftell(inputFile); // Get the file length
+    
     if (fileLength <= 0) {
         // Handle empty file
         fclose(inputFile);
-        return;
+        return ;
     }
 
-    char* lastLine = NULL;
-    long lineLength = 0;
-
-    // Start reading from the end of the file
-    fseek(inputFile, -1, SEEK_END);
+    long offset = -1;
+    int foundNonEmptyLine = 0;
+    char character;
 
     while (ftell(inputFile) > 0) {
-        char character = fgetc(inputFile);
+        fseek(inputFile, offset, SEEK_END);
+        character = fgetc(inputFile);
 
         if (character == '\n') {
-            // End of line reached, break
-            break;
+            if (foundNonEmptyLine) {
+                // This is the end of the last non-empty line
+                break;
+            }
+        } else if (!isspace(character)) {
+            // Found a non-empty character, mark it
+            foundNonEmptyLine = 1;
         }
 
-        lineLength++;
-        fseek(inputFile, -2, SEEK_CUR); // Move back by 2 characters (1 character + 1 newline)
+        offset--;
     }
 
-    // Read the last non-empty line into lastLine
-    lastLine = (char*)malloc((lineLength + 1) * sizeof(char));
+    if (!foundNonEmptyLine) {
+        // No non-empty lines found, handle this case accordingly
+        fclose(inputFile);
+        return ;
+    }
 
+    // Calculate the length of the last non-empty line
+    long lineLength = ftell(inputFile) - 1;
+    
+    if (lineLength <= 0) {
+        // Handle the case when the last non-empty line is the first line
+        fclose(inputFile);
+        return ;
+    }
+    
+    fseek(inputFile, offset + 1, SEEK_END); // Position at the beginning of the last non-empty line
+
+    // Allocate memory for the character array to store the line
+    char* lastLine = (char*)malloc((lineLength + 1) * sizeof(char));
     if (lastLine == NULL) {
         perror("Failed to allocate memory");
         fclose(inputFile);
-        return;
+        return ;
     }
 
-    fgets(lastLine, lineLength + 1, inputFile);
-
-    // Close the input file
-    fclose(inputFile);
-
-    if (lineLength > 0) {
-        // Remove the newline character, if it exists, from the last line
-        char* newlinePosition = strchr(lastLine, '\n');
-        if (newlinePosition != NULL) {
-            *newlinePosition = '\0'; // Replace '\n' with '\0' to terminate the string
-        }
-
-        char line[100];
-        strcpy(line, lastLine);
+    // Read the last non-empty line and store it in the character array
+    if (fgets(lastLine, lineLength + 1, inputFile) == NULL) {
+        perror("Failed to read the last non-empty line");
         free(lastLine);
-
-        FILE* outputFile = fopen("decrypted_passwords.txt", "a");
-        if (outputFile == NULL) {
-            perror("Failed to open the output file");
-            return;
-        }
-
-        // Decrypt the line read from the input file
-        decrypt(line, 3);
-
-        // Write the decrypted line to the output file
-        fputs(line, outputFile);
-        fputs("\n", outputFile);
-
-        // Close the output file
-        fclose(outputFile);
+        fclose(inputFile);
+        return ;
     }
+
+    char line[100];
+    strcpy(line,lastLine);
+    free(lastLine);
+    FILE* outputFile = fopen("decrypted_passwords.txt", "a");
+    if (outputFile == NULL) {
+        perror("Failed to open the output file");
+        fclose(inputFile);
+        return ;
+    }
+    // Decrypt the line read from the input file
+    decrypt(line, 3);
+
+    // Write the decrypted line to the output file
+    fputs(line, outputFile);
+    fputs("\n", outputFile);
+
+    // Close the input and output files
+    fclose(inputFile);
+    fclose(outputFile);
 }
 
 
@@ -215,7 +230,10 @@ void store_passwords(const char *ptr)
         printf("Failed to open store the file.\n");
         return;
     }
-
+    fseek(file, 0, SEEK_END);
+    if(ftell(file)==0){
+        fputs("Encrypted passwords:\n",file);
+    }
     // Encrypt the password and store it
     char* encryptedPassword = encrypt(ptr, 3);
 
@@ -509,10 +527,10 @@ int main()
 			password_generator(password, len, u1); // Call the password_generator function
 			
 			// Check if the password is from the CommonPasswords file
-			while (check_from_dictionary(password)) {
-				printf("Please try again: \n");
-				password_generator(password, len, u1);
-			}
+			// while (check_from_dictionary(password)) {
+			// 	printf("Please try again: \n");
+			// 	password_generator(password, len, u1);
+			// }
 
 			// Check if the password is empty
             if (strlen(password) == 0) {
@@ -545,4 +563,3 @@ int main()
 	
 	return 0;
 }
-
