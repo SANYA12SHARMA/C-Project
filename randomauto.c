@@ -239,12 +239,6 @@ int main()
 		}
 	}
 	free(password); // Deallocate the memory
-    
-    // Ask and read the Encrypted passwords file
-    ask_and_read("Do you want to see Encrypted passwords?", "EncryptedPasswords.txt");
-
-    // Ask and read the Decrypted passwords file
-    ask_and_read("Do you want to see Decrypted passwords?", "DecryptedPasswords.txt");
-	
+	ask_user();//ask user about displaying encrypted and decrypted passwords
 	return 0;
 }
