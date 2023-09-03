@@ -40,7 +40,6 @@ char shiftCharacter(char c, int shiftValue)
     } else {
         int specialCharacterIndex = getSpecialCharacterIndex(c);
         if (specialCharacterIndex == -1) {
-            printf("Unidentified character found: %c\n", c);
             return '\0';
         } else {
             return specialCharacterList[(specialCharacterIndex - shiftValue + strlen(specialCharacterList)) % strlen(specialCharacterList)];
@@ -191,7 +190,6 @@ char shiftCharactere(char c, int shiftValue)
     } else {
         int specialCharacterIndex = getSpecialCharacterIndex(c);
         if (specialCharacterIndex == -1) {
-            printf("Unidentified character found: %c\n", c);
             return '\0';
         } else {
             return specialCharacterList[(specialCharacterIndex + shiftValue) % strlen(specialCharacterList)];
