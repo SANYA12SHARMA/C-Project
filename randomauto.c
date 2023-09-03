@@ -2,14 +2,11 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
-#include <stdbool.h>
 #include <ctype.h>
-#include <math.h>
+
 #define MAX_PASSWORD_LENGTH 64
 
-const char* specialCharacterList = "!@$#%^&*?()";
-// const char specialCharacterList[] = "!@$#%^&*?()";
-
+// User-defined structure for password options
 typedef struct usersOptions
 {
 	int numbers;
@@ -20,143 +17,7 @@ typedef struct usersOptions
 	int similarChar;
 } user;
 
-int getSpecialCharacterIndex(char c) 
-{
-    int specialCharacterCount = strlen(specialCharacterList);
-    for (int i = 0; i < specialCharacterCount; i++) {
-        if (c == specialCharacterList[i]) {
-            return i;
-        }
-    }
-    return -1;
-}
-char shiftCharacter(char c, int shiftValue) 
-{
-    if (isalpha(c)) {
-        char base = isupper(c) ? 'A' : 'a';
-        return (c - base - shiftValue + 26) % 26 + base;
-    } else if (isdigit(c)) {
-        return '0' + ((c - '0' - shiftValue + 10) % 10);
-    } else {
-        int specialCharacterIndex = getSpecialCharacterIndex(c);
-        if (specialCharacterIndex == -1) {
-            printf("Unidentified character found: %c\n", c);
-            return '\0';
-        } else {
-            return specialCharacterList[(specialCharacterIndex - shiftValue + strlen(specialCharacterList)) % strlen(specialCharacterList)];
-
-        }
-    }
-}
-
-void decrypt(char givenMessage[], int shiftValue) 
-{
-    int messageLength = strlen(givenMessage);
-
-    for (int i = 0; i < messageLength; i++) 
-	{
-        givenMessage[i] = shiftCharacter(givenMessage[i], shiftValue); // Decrypting is shifting in the opposite direction
-    }
-}
-
-void decryptfile()
-{
-    FILE* inputFile = fopen("StorePasswords.txt", "r");
-    if (inputFile == NULL) {
-        perror("Failed to open the input file");
-        return ;
-    }
-    
-    long fileLength = 0; // Variable to store the length of the file
-    fseek(inputFile, 0, SEEK_END); // Move to the end of the file
-    fileLength = ftell(inputFile); // Get the file length
-    
-    if (fileLength <= 0) {
-        // Handle empty file
-        fclose(inputFile);
-        return ;
-    }
-
-    long offset = -1;
-    int foundNonEmptyLine = 0;
-    char character;
-
-    while (ftell(inputFile) > 0) {
-        fseek(inputFile, offset, SEEK_END);
-        character = fgetc(inputFile);
-
-        if (character == '\n') {
-            if (foundNonEmptyLine) {
-                // This is the end of the last non-empty line
-                break;
-            }
-        } else if (!isspace(character)) {
-            // Found a non-empty character, mark it
-            foundNonEmptyLine = 1;
-        }
-
-        offset--;
-    }
-
-    if (!foundNonEmptyLine) {
-        // No non-empty lines found, handle this case accordingly
-        fclose(inputFile);
-        return ;
-    }
-
-    // Calculate the length of the last non-empty line
-    long lineLength = ftell(inputFile) - 1;
-    
-    if (lineLength <= 0) {
-        // Handle the case when the last non-empty line is the first line
-        fclose(inputFile);
-        return ;
-    }
-    
-    fseek(inputFile, offset + 1, SEEK_END); // Position at the beginning of the last non-empty line
-
-    // Allocate memory for the character array to store the line
-    char* lastLine = (char*)malloc((lineLength + 1) * sizeof(char));
-    if (lastLine == NULL) {
-        perror("Failed to allocate memory");
-        fclose(inputFile);
-        return ;
-    }
-
-    // Read the last non-empty line and store it in the character array
-    if (fgets(lastLine, lineLength + 1, inputFile) == NULL) {
-        perror("Failed to read the last non-empty line");
-        free(lastLine);
-        fclose(inputFile);
-        return ;
-    }
-
-    char line[100];
-    strcpy(line,lastLine);
-    free(lastLine);
-    FILE* outputFile = fopen("decrypted_passwords.txt", "a");
-    if (outputFile == NULL) {
-        perror("Failed to open the output file");
-        fclose(inputFile);
-        return ;
-    }
-    fseek(outputFile, 0, SEEK_END);
-    if(ftell(outputFile)==0){
-        fputs("Decrypted passwords:\n",outputFile);
-    }
-    // Decrypt the line read from the input file
-    decrypt(line, 3);
-
-    // Write the decrypted line to the output file
-    fputs(line, outputFile);
-    fputs("\n", outputFile);
-
-    // Close the input and output files
-    fclose(inputFile);
-    fclose(outputFile);
-}
-
-
+// Function to calculate password strength
 void calculate_strength(const char* password)
 {
 	int alpha = 0;
@@ -184,205 +45,42 @@ void calculate_strength(const char* password)
 	
 }
 
-
-char shiftCharactere(char c, int shiftValue) 
+// Function to check if all options are excluded
+int all_options_excluded(user u) 
 {
-    if (isalpha(c)) {
-        char base = isupper(c) ? 'A' : 'a';
-        return (c - base + shiftValue) % 26 + base;
-    } else if (isdigit(c)) {
-        return '0' + ((c - '0' + shiftValue) % 10);
-    } else {
-        int specialCharacterIndex = getSpecialCharacterIndex(c);
-        if (specialCharacterIndex == -1) {
-            printf("Unidentified character found: %c\n", c);
-            return '\0';
-        } else {
-            return specialCharacterList[(specialCharacterIndex + shiftValue) % strlen(specialCharacterList)];
-        }
-    }
-
+    return (u.numbers == -1 && u.upperCase == -1 && u.lowerCase == -1 && u.specialChar == -1);
 }
 
-// Function to encrypt a given message and return the encrypted version
-char* encrypt(const char givenMessage[], int shiftValue) 
+// Function to get user input for an option with confirmation
+int user_option(const char *message) 
 {
-    int messageLength = strlen(givenMessage);
+    int choice;
 
-    // Allocate memory for the encrypted message (including space for null terminator)
-    char* encryptedMessage = (char*)malloc((messageLength + 1) * sizeof(char));
+    printf("%s\n", message);
+    printf("Press 1 to include the following option or -1 to not: ");
+    scanf("%d", &choice);
 
-    if (encryptedMessage == NULL) {
-        printf("Memory allocation failed.\n");
-        return NULL;
+    if (choice != 1 && choice != -1) {
+        printf("Invalid choice. Please enter 1 to include or -1 to not.\n");
+        return user_option(message); // Recursive call for input validation
     }
 
-    for (int i = 0; i < messageLength; i++) {
-        encryptedMessage[i] = shiftCharactere(givenMessage[i], shiftValue);
-    }
-
-    // Add null terminator to the end of the encrypted message
-    encryptedMessage[messageLength] = '\0';
-
-    return encryptedMessage;
-}
-
-void store_passwords(const char *ptr)
-{
-    FILE* file = fopen("StorePasswords.txt", "a");
-    if (file == NULL) {
-        printf("Failed to open store the file.\n");
-        return;
-    }
-    // Encrypt the password and store it
-    fseek(file, 0, SEEK_END);
-    if(ftell(file)==0){
-        fputs("Encrypted passwords:\n",file);
-    }
-    char* encryptedPassword = encrypt(ptr, 3);
-
-    if (encryptedPassword != NULL) {
-        fputs(encryptedPassword, file);
-        fputs("\n", file);
-        free(encryptedPassword); // Free the memory allocated for the encrypted password
-    } else {
-        printf("Failed to encrypt the password.\n");
-    }
-
-    fclose(file);
-
-    printf("Password stored successfully.\n");
-}
-
-// Function to check if a password exists in a common passwords file.
-bool check_from_dictionary(const char* password)
-{
-    FILE* file = fopen("CommonPasswords.txt", "r");
-    
-    // Check if the file could be opened successfully.
-    if (file == NULL)
-    {
-        printf("Failed to open the file.\n");
-        return false;
-    }   
-    
-    char line[30];
-    
-    // Read lines from the file one by one.
-    while (fgets(line, sizeof(line), file) != NULL)
-    {
-        // Remove the newline character, if present, from the end of the line.
-        line[strcspn(line, "\n")] = '\0';
-        
-        // Compare the current line with the provided password.
-        if (strcmp(line, password) == 0)
-        {
-            printf("Change the password.\n");
-            fclose(file);
-            return true;
-        }
-    }
-    
-    // Close the dictionary file and return false if the password was not found.
-    fclose(file);
-    return false;
-}
-
-// Function to check if a character 'c' is similar to any character in the 'similarChars' array.
-bool is_similar(char c)
-{
-    const char similarChars[] = "iI1loO0";
-    
-    for (int i = 0; similarChars[i] != '\0'; i++)
-    {
-        if (c == similarChars[i])
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
-// Function to remove similar characters from the input string 'password'.
-void remove_similar(char* password)
-{
-    int len = strlen(password);
-    int curr = 0;
-    
-    // If the string has a length of 0 or 1, there are no similar characters to remove, so return.
-    if (len <= 1)
-    {
-        return;
-    }
-    
-    // Loop through each character in the password, and if it is not similar, copy it to the 'curr' position.
-    for (int i = 0; i < len; i++)
-    {
-        if (!is_similar(password[i]))
-        {
-            password[curr] = password[i];
-            curr++;
-        }
-    }
-    
-    // Terminate the modified password with a null character.
-    password[curr] = '\0';
-}
-
-// Function to remove occurrences of a specific character .
-void remove_all_occurrences(char* password, const char ch, int index)
-{
-    while (password[index] != '\0')
-    {
-        if (password[index] == ch)
-        {
-			int k;
-            for (k = index; password[k] != '\0'; k++)
-            {
-                password[k] = password[k + 1];
-            }
-            password[k] = '\0';
-        }
-        
-        index++;
-    }
-}
-
-// Function to remove duplicate characters from the input string 'password'
-void remove_duplicates(char* password)
-{
-    int len = strlen(password);
-    
-    // If the string has a length of 0 or 1, it already has no duplicates, so return.
-    if (len <= 1)
-    {
-        return;
-    }
-    
-    // Loop through each character in the string and remove its occurrences beyond the current position.
-    for (int i = 0; i < len; i++)
-    {
-        remove_all_occurrences(password, password[i], i + 1);
-    }
+    return choice;
 }
 
 //Function to generate a password
 void password_generator(char* password, int n, user u1)
 {
 	int randomNum = 0;
-	
-	//initialise random number generator
-	srand((unsigned int)(time(NULL)));
+
+	srand((unsigned int)(time(NULL))); //initialise random number generator
 
 	randomNum = rand() % 4; // Generate a random number between 0 and 3 (inclusive)
 	
-	//array for storing numbers
+	 // Arrays for storing character sets
 	char Numbers[] = "0123456789";
-	//array for storing lowercase alphabets
 	char LowerCase[] = "abcdefghijklmnopqrstuvwxyz";
-	//array for storing uppercase alphabets
 	char UpperCase[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	//array for all special characters
 	char SpecialChar[] = "!@$#%^&*?()";
 	
 	int i=0;
@@ -426,29 +124,7 @@ void password_generator(char* password, int n, user u1)
     }
 }
 
-// Function to check if all options are excluded
-int all_options_excluded(user u) 
-{
-    return (u.numbers == -1 && u.upperCase == -1 && u.lowerCase == -1 && u.specialChar == -1);
-}
-
-// Function to get user input for an option with confirmation
-int user_option(const char *message) 
-{
-    int choice;
-
-    printf("%s\n", message);
-    printf("Press 1 to include the following option or -1 to not: ");
-    scanf("%d", &choice);
-
-    if (choice != 1 && choice != -1) {
-        printf("Invalid choice. Please enter 1 to include or -1 to not.\n");
-        return user_option(message); // Recursive call for input validation
-    }
-
-    return choice;
-}
-
+// Function to print a heading with a border
 void print_heading(char* txt)
 {
 	printf("\n\033[1;33m");
@@ -474,6 +150,7 @@ void print_heading(char* txt)
 
 int main()
 {
+    // Print a heading for the program
 	print_heading("GENERATE A RANDOM PASSWORD");
 	printf("\033[1;31m RULES \n");
 	printf("----------------------------------------------------------------\n");
@@ -488,7 +165,7 @@ int main()
 	printf("----------------------------------------------------------------\n");
 	printf("\033[0m");
 	
-	//length of password
+	//Length of password
 	int len;
 	printf("Enter the length of the Password: ");
 	scanf("%d",&len);
@@ -530,30 +207,28 @@ int main()
 
 			password_generator(password, len, u1); // Call the password_generator function
 			
-			// Check if the password is from the CommonPasswords file
-			// while (check_from_dictionary(password)) {
-			// 	printf("Please try again: \n");
-			// 	password_generator(password, len, u1);
-			// }
+			//Check if the password is from the CommonPasswords file
+			while (check_from_dictionary(password)) {
+				printf("Please try again: \n");
+				password_generator(password, len, u1);
+			}
 
 			// Check if the password is empty
             if (strlen(password) == 0) {
                 printf("Password is empty. Calculating strength is not possible.\n");
             } else {
-                char ptr[strlen(password)+1];
+                char ptr[strlen(password)+1]; // Duplicate array to store password
 				strcpy(ptr,password);
-                // Store passwords in a file
-                store_passwords(ptr);
-                printf("File encrypted successfully!!!");
-                decryptfile();
+
+                encrypt_passwords(ptr); // Call the encryption function
+                decrypt_passwords(); // Call the decryption function
+
                 printf("Your password is: %s\n\n", password);
                 
-                // Check strength of the password
+                // Check the strength of the password
                 printf("\n******************************\n");
                 printf("\e[4;37mPASSWORD STRENGTH\e[0m");
-                
                 calculate_strength(password);
-                
                 printf("******************************\n");
             }
 		} else if (choice == 'n') {
@@ -563,7 +238,13 @@ int main()
 			printf("Invalid input. Please enter 'y' or 'n'.\n");
 		}
 	}
-	free(password);//deallocate the memory
+	free(password); // Deallocate the memory
+    
+    // Ask and read the Encrypted passwords file
+    ask_and_read("Do you want to see Encrypted passwords?", "EncryptedPasswords.txt");
+
+    // Ask and read the Decrypted passwords file
+    ask_and_read("Do you want to see Decrypted passwords?", "DecryptedPasswords.txt");
 	
 	return 0;
 }
