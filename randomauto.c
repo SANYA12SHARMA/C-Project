@@ -5,8 +5,10 @@
 #include <stdbool.h>
 #include <ctype.h>
 #include <math.h>
+#define MAX_PASSWORD_LENGTH 64
 
-const char specialCharacterList[] = "!@$#%^&*?()";
+const char* specialCharacterList = "!@$#%^&*?()";
+// const char specialCharacterList[] = "!@$#%^&*?()";
 
 typedef struct usersOptions
 {
@@ -208,7 +210,7 @@ void store_passwords(const char *ptr)
 {
     FILE* file = fopen("StorePasswords.txt", "a");
     if (file == NULL) {
-        printf("Failed to open store password the file.\n");
+        printf("Failed to open store the file.\n");
         return;
     }
 
@@ -468,7 +470,7 @@ int main()
 	scanf("%d",&len);
 
 	//Length should be greater than or equal to 6 and less than  or equal to 64 
-	while(len < 6 || len > 64)
+	while(len < 6 || len > MAX_PASSWORD_LENGTH)
 	{
 		printf("Invalid Length, Please Enter Again: ");
 		scanf("%d",&len);
@@ -515,7 +517,6 @@ int main()
                 printf("Password is empty. Calculating strength is not possible.\n");
             } else {
                 char ptr[strlen(password)+1];
-
 				strcpy(ptr,password);
                 // Store passwords in a file
                 store_passwords(ptr);
@@ -542,5 +543,4 @@ int main()
 	
 	return 0;
 }
-
 
