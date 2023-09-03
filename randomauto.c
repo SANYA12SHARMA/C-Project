@@ -118,10 +118,10 @@ void password_generator(char* password, int n, user u1)
 	}	
 
 	// Handle empty password after removal
-    if (strlen(password) == 0){
-        printf("Password became empty after removing duplicates or similar characters. Regenerating it...\n");
-        password_generator(password, n, u1);
-    }
+	if (strlen(password) == 0){
+		printf("Password became empty after removing duplicates or similar characters. Regenerating it...\n");
+		password_generator(password, n, u1);
+	}
 }
 
 // Function to print a heading with a border
@@ -214,31 +214,31 @@ int main()
 			}
 
 			// Check if the password is empty
-            if (strlen(password) == 0) {
-                printf("Password is empty. Calculating strength is not possible.\n");
-            } else {
-                char ptr[strlen(password)+1]; // Duplicate array to store password
+			if (strlen(password) == 0) {
+				printf("Password is empty. Calculating strength is not possible.\n");
+			} else {
+				char ptr[strlen(password)+1]; // Duplicate array to store password
 				strcpy(ptr,password);
-
-                encrypt_passwords(ptr); // Call the encryption function
-                decrypt_passwords(); // Call the decryption function
-
-                printf("Your password is: %s\n\n", password);
-                
-                // Check the strength of the password
-                printf("\n******************************\n");
-                printf("\e[4;37mPASSWORD STRENGTH\e[0m");
-                calculate_strength(password);
-                printf("******************************\n");
-            }
+				
+				encrypt_passwords(ptr); // Call the encryption function
+				decrypt_passwords(); // Call the decryption function
+				
+				printf("Your password is: %s\n\n", password);
+			
+				// Check the strength of the password
+				printf("\n******************************\n");
+				printf("\e[4;37mPASSWORD STRENGTH\e[0m");
+				calculate_strength(password);
+				printf("******************************\n");
+			}
 		} else if (choice == 'n') {
 			printf("Exit...\n");
-			break; // Exit the loop 
+			break; 
 		} else {
 			printf("Invalid input. Please enter 'y' or 'n'.\n");
 		}
 	}
 	free(password); // Deallocate the memory
-	ask_user();//ask user about displaying encrypted and decrypted passwords
+	ask_user(); // ask user about displaying encrypted and decrypted passwords
 	return 0;
 }
