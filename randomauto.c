@@ -3,6 +3,8 @@
 #include <time.h>
 #include <string.h>
 #include <ctype.h>
+#include "filefunctions.h"
+#include "pwdfunctions.h"
 
 #define MAX_PASSWORD_LENGTH 64
 
